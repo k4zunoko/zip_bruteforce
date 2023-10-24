@@ -1,21 +1,17 @@
 import os
-import subprocess
-
+import pyminizip
 
 pass_word = input("ファイル名=")
-print(pass_word)
 
-input_dir_path = os.path.join(os.path.dirname(__file__), "storage/sample.txt") # 圧縮対象フォルダ
-output_dir_path = os.path.join(os.path.dirname(__file__), "storage") # 圧縮後のフォルダ
+input_dir_path = os.path.join(os.path.dirname(__file__), "storage/sample.txt")  # 圧縮対象フォルダ
+output_dir_path = os.path.join(os.path.dirname(__file__), "storage")  # 圧縮後のフォルダ
+zip_file_path = os.path.join(output_dir_path, pass_word + '.zip')
 
-path_exe = r'C:\Program Files\7-Zip\7z.exe'# 7zip実行ファイルのパス
-args = (
-       path_exe, 
-       'a', 
-       os.path.join(output_dir_path, pass_word+'.zip'), # 圧縮後のファイル
-       input_dir_path, # 圧縮対象フォルダ
-       '-mx=9', # 圧縮レベル0-9 ９が最大
-       '-p=' + pass_word, # パスワード
-)
+# ファイルを圧縮
+pyminizip.compress(input_dir_path, "", zip_file_path, pass_word, 0)
 
-result = subprocess.run(args)
+# 圧縮後のファイルが生成されました
+print(f"圧縮完了: {zip_file_path}")
+
+# これで作成したzipファイルはpythonプログラムでうまく解凍できないので使用しない。
+# 7zipを用いてAES-256を用いて圧縮したファイルを使用する。
