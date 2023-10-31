@@ -1,0 +1,26 @@
+import pyzipper
+
+def extract_zip(password):
+    with pyzipper.AESZipFile(zip_file_name) as zip_file:
+        try:
+            zip_file.pwd = password.encode()
+            zip_file.extractall()
+            return True
+        except Exception:
+            return False
+
+# 解析するzipファイル名
+zip_file_name = f"storage/{input('解析するzipファイル名（拡張子なし）= ')}.zip"
+
+# 解析するパスワードの桁数
+password_length = 3
+total_passwords = 10**password_length
+
+print(f"{password_length}ケタ")
+
+# パスワードの総当たりを行う
+for i in range(total_passwords):
+    password = "{:04d}".format(i)
+    if extract_zip(password):
+        print(f"Success! Password is {password}")
+        break

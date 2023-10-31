@@ -2,17 +2,16 @@ import pyzipper
 import itertools
 import threading
 import time
-import os
 
 start_time = time.time()
 # ZIPファイルのパス
-zip_file_name = os.path.join(os.path.dirname(__file__), "storage/"+input("解析するzipファイル名（拡張子なし）= ")+".zip")
+zip_file_name = f"storage/{input('解析するzipファイル名（拡張子なし）= ')}.zip"
 
 # スレッドの数（パスワード破解を並列化する場合、適宜変更してください）
 num_threads = 4
 
-password_length = 4
-charset = "0123456789abcdefghijklmnopqrstuvwxyz"
+password_length = 3
+charset = "abcdefghijklmnopqrstuvwxyz"
 # charset = "0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ"
 passwords = list(itertools.product(charset, repeat=password_length))
 total_passwords = len(charset) ** password_length
