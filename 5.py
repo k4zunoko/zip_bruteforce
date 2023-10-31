@@ -1,5 +1,5 @@
 import pyzipper
-import threading
+import itertools
 import time
 
 def extract_zip(password):
@@ -10,58 +10,31 @@ def extract_zip(password):
             return True
         except Exception:
             return False
-        
-# パスワードを生成するジェネレーター関数
-def password_generator(start, step):
-    for i in range(start, total_passwords, step):
-        yield "{:04d}".format(i)
-
-# パスワードを試す関数
-def try_password(password):
-    global found_password
-    if found_password[0]:
-        # すでに正しいパスワードが見つかっている場合は何もしない
-        return
-    if extract_zip(password):
-        found_password[0] = password
 
 start_time = time.time()
+count = 0  # 解析したパスワード数をカウントするリスト
+progress = 0
 
 # 解析するzipファイル名
 zip_file_name = f"storage/{input('解析するzipファイル名（拡張子なし）= ')}.zip"
 
 # 解析するパスワードの桁数
 password_length = 3
-total_passwords = 10**password_length
+charset = "abcdefghijklmnopqrstuvwxyz"
+passwords = list(itertools.product(charset, repeat=password_length))
+total_passwords = len(charset) ** password_length
 
 print(f"{password_length}ケタ")
 
-# スレッド数
-num_threads = 4
-
-# 正しいパスワードが見つかったらここに格納
-found_password = [None]
-
-
-
-# マルチスレッドでパスワードを試す
-threads = []
-for i in range(num_threads):
-    passwords = password_generator(i, num_threads)
-    thread = threading.Thread(target=lambda: [try_password(password) for password in passwords])
-    threads.append(thread)
-    thread.start()
-
-# スレッドが終了するまで待つ
-while any(t.is_alive() for t in threads):
-    if found_password[0]:
-        # 正しいパスワードが見つかっている場合は、スレッドをすべて終了する
+# パスワードの総当たりを行う
+for password in passwords:
+    password = "".join(password)
+    count += 1
+    if extract_zip(password):
+        print(f"Success! Password is {password}")
         break
-    else:
-        print("実行中...")
-        time.sleep(1)
-
-print(f"Success! Password is {found_password[0]}")
+    progress = int(count / total_passwords * 100)
+    print(f"Progress: {progress}%")
 
 end_time = time.time()
 elapsed_time = int(end_time - start_time)
