@@ -2,6 +2,7 @@ import pyzipper
 import itertools
 import threading
 import time
+import sys
 
 start_time = time.time()
 # ZIPファイルのパス
@@ -22,15 +23,15 @@ chunk_size = total_passwords // num_threads
 found_password = [None]
 
 def extract_zip(password):
-    try:
-        with pyzipper.AESZipFile(zip_file_name) as zip_file:
+    with pyzipper.AESZipFile(zip_file_name) as zip_file:
+        try:
             zip_file.pwd = password.encode()
             zip_file.extractall()
             return True
-    except Exception:
-        return False
-    finally:
-        passwords_tried[0] += 1
+        except Exception:
+            return False
+        finally:
+            passwords_tried[0] += 1
 
 # パスワードのブルートフォース攻撃
 def brute_force_attack(start, end):
@@ -57,7 +58,10 @@ while any(t.is_alive() for t in threads):
     else:
         # 正しいパスワードが見つかっていない場合は、進捗を表示する
         progress = passwords_tried[0] / total_passwords * 100
-        print(f"Progress: {progress:.2f}%")
+        sys.stdout.write(f"\rProgress: {progress:.2f}%")
+        if progress != 0:
+            remaining_time = (time.time() - start_time) / progress * (100 - progress)
+            sys.stdout.write(f"  Remaining time: {remaining_time:.2f} s")
         time.sleep(1)
 
 progress = passwords_tried[0] / total_passwords * 100

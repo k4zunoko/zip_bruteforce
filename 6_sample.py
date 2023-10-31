@@ -14,7 +14,7 @@ def extract_zip(password):
 # パスワードを生成するジェネレーター関数
 def password_generator(start, step):
     for i in range(start, total_passwords, step):
-        yield "{:04d}".format(i)
+        yield f"{i:0{password_length}d}"
 
 # パスワードを試す関数
 def try_password(password):

@@ -20,7 +20,7 @@ print(f"{password_length}ケタ")
 
 # パスワードの総当たりを行う
 for i in range(total_passwords):
-    password = "{:04d}".format(i)
+    password = f"{i:0{password_length}d}"
     if extract_zip(password):
         print(f"Success! Password is {password}")
         break

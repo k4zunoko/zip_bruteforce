@@ -11,7 +11,6 @@ def extract_zip(password):
             return False
 
 start_time = time.time()
-count = 0  # 解析したパスワード数をカウントするリスト
 progress = 0
 
 # 解析するzipファイル名
@@ -25,12 +24,11 @@ print(f"{password_length}ケタ")
 
 # パスワードの総当たりを行う
 for i in range(total_passwords):
-    password = "{:04d}".format(i)
-    count += 1
+    password = f"{i:0{password_length}d}"
     if extract_zip(password):
         print(f"Success! Password is {password}")
         break
-    progress = int(count / total_passwords * 100)
+    progress = int(i / total_passwords * 100)
     print(f"Progress: {progress}%")
 
 end_time = time.time()
